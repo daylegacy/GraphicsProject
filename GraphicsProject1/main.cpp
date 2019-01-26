@@ -1,5 +1,9 @@
 #include "libs.h"
 #include "libs.h"
+
+void framebuffer_resize_callback(GLFWwindow * window, int fbW, int fbH) {
+	glViewport(0, 0, fbW, fbH);
+}
 int main() {
 	//INIT GLFW
 	glfwInit();
@@ -13,12 +17,14 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
 	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "window", NULL, NULL);
 
-	glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight); 
-	glViewport(0, 0, framebufferWidth, framebufferHeight);
+	glfwSetFramebufferSizeCallback(window, framebuffer_resize_callback);
+
+	//glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight); 
+	//glViewport(0, 0, framebufferWidth, framebufferHeight);
 
 	glfwMakeContextCurrent(window);
 

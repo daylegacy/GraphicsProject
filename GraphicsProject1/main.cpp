@@ -1,8 +1,29 @@
 #include "libs.h"
-#include "libs.h"
+
+
+Vertex vertices[] = {
+	//Position							//color						//texcoords
+	glm::vec3(0.0f, 0.5f, 0.f),			glm::vec3(1.f, 0.f, 0.f),	glm::vec2(0.f, 1.f),
+	glm::vec3(-0.5f, -0.5f, 0.f),		glm::vec3(0.f, 1.f, 0.f),	glm::vec2(0.f, 0.f),
+	glm::vec3(0.5f,-0.5f, 0.f),			glm::vec3(0.f, 0.f, 1.f),	glm::vec2(1.f, 0.f)
+};
+unsigned nrOfVertices = sizeof(vertices)/sizeof Vertex;
+
+GLuint indices[] =
+{
+	0, 1, 2
+};
+unsigned nrOfIndices = sizeof(indices) / sizeof(GLuint);
+
 
 void framebuffer_resize_callback(GLFWwindow * window, int fbW, int fbH) {
 	glViewport(0, 0, fbW, fbH);
+}
+
+void updateInput(GLFWwindow  *window) {
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+		glfwSetWindowShouldClose(window, GLFW_TRUE);
+	}
 }
 
 
@@ -129,24 +150,79 @@ int main() {
 		glfwTerminate();
 	}
 
+	//open_gl options
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+
+
 	//shader init
 	GLuint core_program;
 	if (!loadShaders(core_program))
 		glfwTerminate();
 
 
+	//model
+
+	//VAO, VBO, EBO
+	//gen VAO and bind
+	GLuint VAO;
+	glCreateVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+	 
+	//GEN VBO AND BIND AND SEND DATA
+	GLuint VBO;
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	//GEN EBO AND BIND AND SEND DATA
+	GLuint EBO;
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	//SET VERTEXATTRIBPOINTERS AND ENABLE (INPUT ASSEMBLY)
+	//GLuint attribLoc = glGetAttribLocation(core_program, "vertex_position");
+	//Position
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
+	glEnableVertexAttribArray(0);
+	//Color
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
+	glEnableVertexAttribArray(1);
+	//Texcoord
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texcoord));
+	glEnableVertexAttribArray(2);
+
+	//bind VAO 0
+	glBindVertexArray(0);
+	
 	//MAIN LOOP
 	while (!glfwWindowShouldClose(window)) {
 		//UPDATE INPUT
 		glfwPollEvents();
 
 		//update
-
+		updateInput(window);
 		//Draw
 		//Clear
-		glClearColor(0.f, 0.5f, 0.2f, 1.f);
+		glClearColor(0.f, 0.0f, 0.1f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		//Use a program
+		glUseProgram(core_program);
+
+		//bind vertex array object
+		glBindVertexArray(VAO);
+
 		//Draw
+		glDrawElements(GL_TRIANGLES, nrOfIndices, GL_UNSIGNED_INT, 0);
 
 		//End of draw
 		glfwSwapBuffers(window);

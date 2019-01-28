@@ -212,10 +212,10 @@ int main() {
 	glBindVertexArray(0);
 	
 
-	//texture init
+	//texture0 init
 	int image_width = 0;
 	int image_height = 0;
-	unsigned char* image = SOIL_load_image("Images/pusheen.png", &image_width, &image_height, NULL, SOIL_LOAD_RGBA);
+	unsigned char* image = SOIL_load_image("Images/cat.png", &image_width, &image_height, NULL, SOIL_LOAD_RGBA);
 
 	GLuint texture0;
 	glGenTextures(1, &texture0);
@@ -237,6 +237,31 @@ int main() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	SOIL_free_image_data(image);
 
+	//texture1 init
+	int image_width1 = 0;
+	int image_height1 = 0;
+	unsigned char* image1 = SOIL_load_image("Images/crate.png", &image_width1, &image_height1, NULL, SOIL_LOAD_RGBA);
+
+	GLuint texture1;
+	glGenTextures(1, &texture1);
+	glBindTexture(GL_TEXTURE_2D, texture1);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	if (image1) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width1, image_height1, 0, GL_RGBA, GL_UNSIGNED_BYTE, image1);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else {
+		std::cout << "ERROR::TEXTURE1_LOADING_FAILED" << "\n";
+	}
+	glActiveTexture(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	SOIL_free_image_data(image1);
+
 
 	//MAIN LOOP
 	while (!glfwWindowShouldClose(window)) {
@@ -254,10 +279,13 @@ int main() {
 
 		//update uniforms
 		glUniform1i(glGetUniformLocation(core_program, "texture0"), 0);
+		glUniform1i(glGetUniformLocation(core_program, "texture1"), 1);
 
 		//activate texture
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture0);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture1);
 
 		//bind vertex array object
 		glBindVertexArray(VAO);

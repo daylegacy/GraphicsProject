@@ -215,7 +215,7 @@ int main() {
 	//texture0 init
 	int image_width = 0;
 	int image_height = 0;
-	unsigned char* image = SOIL_load_image("Images/cat.png", &image_width, &image_height, NULL, SOIL_LOAD_RGBA);
+	unsigned char  *image = SOIL_load_image("Images/cat.png", &image_width, &image_height, NULL, SOIL_LOAD_RGBA);
 
 	GLuint texture0;
 	glGenTextures(1, &texture0);
@@ -262,6 +262,16 @@ int main() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	SOIL_free_image_data(image1);
 
+	glm::mat4 ModelMatrix(1.f);
+	ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.f));
+	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(1.f, 0.f, 0.f));
+	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(0.f, 1.f, 0.f));
+	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(0.f, 0.f, 1.f));
+	ModelMatrix = glm::scale(ModelMatrix, glm::vec3(1.f));
+
+	glUseProgram(core_program);
+	glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, glm::value_ptr(ModelMatrix));
+
 
 	//MAIN LOOP
 	while (!glfwWindowShouldClose(window)) {
@@ -280,6 +290,13 @@ int main() {
 		//update uniforms
 		glUniform1i(glGetUniformLocation(core_program, "texture0"), 0);
 		glUniform1i(glGetUniformLocation(core_program, "texture1"), 1);
+
+		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.001f, 0.f, 0.f));
+		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(1.f, 0.f, 0.f));
+		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(0.f, 1.f, 0.f));
+		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(0.f, 0.f, 1.f));
+		ModelMatrix = glm::scale(ModelMatrix, glm::vec3(1.f));
+		glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, glm::value_ptr(ModelMatrix));
 
 		//activate texture
 		glActiveTexture(GL_TEXTURE0);

@@ -123,6 +123,42 @@ bool loadShaders(GLuint &program) {
 
 	return loadSuccess;
 }
+
+void updateInput(GLFWwindow * window, glm::vec3& position, glm::vec3& rotation, glm::vec3& scale, glm::vec3& camPosition) {
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		position.z -= 0.01f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		position.x -= 0.01f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		position.z += 0.01f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		position.x += 0.01f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+		rotation.y -= 0.01f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+		rotation.y += 0.01f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
+		scale -= 0.1f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
+		scale += 0.1f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+		camPosition.x -= 0.1f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
+		camPosition.x += 0.1f;
+	}
+
+
+}
+
 int main() {
 	//INIT GLFW
 	glfwInit();
@@ -264,14 +300,18 @@ int main() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	SOIL_free_image_data(image1);
 
-	glm::mat4 ModelMatrix(1.f);
-	ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.f));
-	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.0f), glm::vec3(1.f, 0.f, 0.f));
-	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(0.f, 1.f, 0.f));
-	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(0.f, 0.f, 1.f));
-	ModelMatrix = glm::scale(ModelMatrix, glm::vec3(1.f));
+	glm::vec3 position(0.f);
+	glm::vec3 rotation(0.f);
+	glm::vec3 scale(1.f);
 
-	glm::vec3 camPosition(0.f, 0.f, 2.f);
+	glm::mat4 ModelMatrix(1.f);
+	ModelMatrix = glm::translate(ModelMatrix, position);
+	ModelMatrix = glm::rotate(ModelMatrix, rotation.x, glm::vec3(1.f, 0.f, 0.f));
+	ModelMatrix = glm::rotate(ModelMatrix, rotation.y, glm::vec3(0.f, 1.f, 0.f));
+	ModelMatrix = glm::rotate(ModelMatrix, rotation.z, glm::vec3(0.f, 0.f, 1.f));
+	ModelMatrix = glm::scale(ModelMatrix, scale);
+
+	glm::vec3 camPosition(0.f, 0.f, 1.f);
 	glm::vec3 worldUp(0.f, 1.f, 0.f);
 	glm::vec3 camFront(0.f, 0.f, -1.f);
 	glm::mat4 ViewMatrix(1.f);
@@ -297,14 +337,16 @@ int main() {
 
 
 	//MAIN LOOP
+	float change = -0.1f;
 	while (!glfwWindowShouldClose(window)) {
 		//UPDATE INPUT
 		glfwPollEvents();
+		updateInput(window, position, rotation, scale, camPosition);
 
 		//update
 		updateInput(window);
-		//Draw
-		//Clear
+		//draw
+		//clear
 		glClearColor(0.f, 0.2f, 0.3f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		//Use a program
@@ -314,16 +356,28 @@ int main() {
 		glUniform1i(glGetUniformLocation(core_program, "texture0"), 0);
 		glUniform1i(glGetUniformLocation(core_program, "texture1"), 1);
 
-		ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, 0.f, 0.f));
-		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.0f), glm::vec3(1.f, 0.f, 0.f));
-		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.0f), glm::vec3(0.f, 1.f, 0.f));
-		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(0.f, 0.f, 1.f));
-		ModelMatrix = glm::scale(ModelMatrix, glm::vec3(1.f));
+		
+		/*if (position.z <= -3.f) {
+			change *= -1.f;
+		}
+		if (position.z > 0.f) {
+			change *= -1.f;
+		}
+		position.z += change;*/
+		//rotation.y += .1f;
+
+		//model matrix
+		ModelMatrix = glm::mat4 (1.f);
+		ModelMatrix = glm::translate(ModelMatrix, position);
+		ModelMatrix = glm::rotate(ModelMatrix, rotation.x, glm::vec3(1.f, 0.f, 0.f));
+		ModelMatrix = glm::rotate(ModelMatrix, rotation.y, glm::vec3(0.f, 1.f, 0.f));
+		ModelMatrix = glm::rotate(ModelMatrix, rotation.z, glm::vec3(0.f, 0.f, 1.f));
+		ModelMatrix = glm::scale(ModelMatrix, scale);
 		glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, glm::value_ptr(ModelMatrix));
 
 		//restrict shortening depends on window proportions but cant minimize
 		glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
-
+		//projection matrix
 		glm::mat4 ProjectionMatrix(1.f);
 		ProjectionMatrix = glm::perspective(
 			glm::radians(fov),
@@ -333,6 +387,10 @@ int main() {
 		);
 		glUniformMatrix4fv(glGetUniformLocation(core_program, "ProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
 
+
+		//view matrix
+		ViewMatrix = glm::lookAt(camPosition, camPosition + camFront, worldUp);
+		glUniformMatrix4fv(glGetUniformLocation(core_program, "ViewMatrix"), 1, GL_FALSE, glm::value_ptr(ViewMatrix));
 
 		//activate texture
 		glActiveTexture(GL_TEXTURE0);

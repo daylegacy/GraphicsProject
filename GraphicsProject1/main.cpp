@@ -3,15 +3,21 @@
 
 Vertex vertices[] = {
 	//Position							//color						//texcoords
-	glm::vec3(0.0f, 0.5f, 0.f),			glm::vec3(1.f, 0.f, 0.f),	glm::vec2(0.f, 1.f),
+	
+	glm::vec3(-0.5f, 0.5f, 0.f),		glm::vec3(1.f, 0.f, 0.f),	glm::vec2(0.f, 1.f),
 	glm::vec3(-0.5f, -0.5f, 0.f),		glm::vec3(0.f, 1.f, 0.f),	glm::vec2(0.f, 0.f),
-	glm::vec3(0.5f,-0.5f, 0.f),			glm::vec3(0.f, 0.f, 1.f),	glm::vec2(1.f, 0.f)
+	glm::vec3(0.5f,-0.5f, 0.f),			glm::vec3(0.f, 0.f, 1.f),	glm::vec2(1.f, 0.f),
+
+	//glm::vec3(-0.5f, 0.5f, 0.f),		glm::vec3(1.f, 0.f, 0.f),	glm::vec2(0.f, 1.f),
+	//glm::vec3(0.5f,-0.5f, 0.f),			glm::vec3(0.f, 0.f, 1.f),	glm::vec2(1.f, 0.f),
+	glm::vec3(0.5f, 0.5f, 0.f),			glm::vec3(1.f, 1.f, 0.f),	glm::vec2(0.f, 0.f)
 };
 unsigned nrOfVertices = sizeof(vertices)/sizeof Vertex;
 
 GLuint indices[] =
 {
-	0, 1, 2
+	0, 1, 2, //triangle 1
+	0, 2, 3 //tringle 2
 };
 unsigned nrOfIndices = sizeof(indices) / sizeof(GLuint);
 
@@ -131,6 +137,7 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+	//glfwSwapInterval(6);
 
 	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "window", NULL, NULL);
 
@@ -213,7 +220,7 @@ int main() {
 		updateInput(window);
 		//Draw
 		//Clear
-		glClearColor(0.f, 0.0f, 0.1f, 1.f);
+		glClearColor(0.f, 0.2f, 0.3f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		//Use a program
 		glUseProgram(core_program);
@@ -222,6 +229,7 @@ int main() {
 		glBindVertexArray(VAO);
 
 		//Draw
+		//glDrawArrays(GL_TRIANGLES, 0, nrOfVertices);
 		glDrawElements(GL_TRIANGLES, nrOfIndices, GL_UNSIGNED_INT, 0);
 
 		//End of draw

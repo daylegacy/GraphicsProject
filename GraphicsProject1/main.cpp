@@ -254,7 +254,7 @@ int main() {
 	//texture0 init
 	int image_width = 0;
 	int image_height = 0;
-	unsigned char  *image = SOIL_load_image("Images/cat.png", &image_width, &image_height, NULL, SOIL_LOAD_RGBA);
+	unsigned char  *image = SOIL_load_image("Images/pusheen.png", &image_width, &image_height, NULL, SOIL_LOAD_RGBA);
 
 	GLuint texture0;
 	glGenTextures(1, &texture0);
@@ -342,6 +342,7 @@ int main() {
 	glUniformMatrix4fv(glGetUniformLocation(core_program, "ProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
 
 	glUniform3fv(glGetUniformLocation(core_program, "lightPos0"), 1, glm::value_ptr(lightPos0));
+	glUniform3fv(glGetUniformLocation(core_program, "cameraPos"), 1, glm::value_ptr(camPosition));
 
 	//glUseProgram(0);
 

@@ -155,57 +155,16 @@ int main() {
 	//bind VAO 0
 	glBindVertexArray(0);
 	
-
+	
 	//texture0 init
-	int image_width = 0;
-	int image_height = 0;
-	unsigned char  *image = SOIL_load_image("Images/pusheen.png", &image_width, &image_height, NULL, SOIL_LOAD_RGBA);
-
-	GLuint texture0;
-	glGenTextures(1, &texture0);
-	glBindTexture(GL_TEXTURE_2D, texture0);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-	if (image) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else {
-		std::cout << "ERROR::TEXTURE_LOADING_FAILED" << "\n";
-	}
-	glActiveTexture(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	SOIL_free_image_data(image);
+	Texture texture_0("Images/crate.png", GL_TEXTURE_2D ,0);
 
 	//texture1 init
-	int image_width1 = 0;
-	int image_height1 = 0;
-	unsigned char* image1 = SOIL_load_image("Images/crate.png", &image_width1, &image_height1, NULL, SOIL_LOAD_RGBA);
+	Texture texture_1("Images/cat.png", GL_TEXTURE_2D, 1);
 
-	GLuint texture1;
-	glGenTextures(1, &texture1);
-	glBindTexture(GL_TEXTURE_2D, texture1);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-	if (image1) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width1, image_height1, 0, GL_RGBA, GL_UNSIGNED_BYTE, image1);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else {
-		std::cout << "ERROR::TEXTURE1_LOADING_FAILED" << "\n";
-	}
-	glActiveTexture(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	SOIL_free_image_data(image1);
-
+	//material
+	Material material0(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(4.f), texture_0.getTextureUnit(), texture_1.getTextureUnit());
+	
 	glm::vec3 position(0.f);
 	glm::vec3 rotation(0.f);
 	glm::vec3 scale(1.f);
@@ -238,8 +197,6 @@ int main() {
 	//Lights
 	glm::vec3 lightPos0(0.f, 0.f, 1.f);
 
-
-
 	//INIT uniforms
 	core_program.use();
 	core_program.setMat4fv(ModelMatrix, "ModelMatrix");
@@ -249,7 +206,6 @@ int main() {
 	core_program.setVec3f(lightPos0, "lightPos0");
 	core_program.setVec3f(camPosition, "cameraPos");
 
-	//glUseProgram(0);
 
 	//MAIN LOOP
 	while (!glfwWindowShouldClose(window)) {
@@ -266,8 +222,9 @@ int main() {
 
 
 		//update uniforms
-		core_program.set1i(0, "texture0");
-		core_program.set1i(1, "texture1");
+		//core_program.set1i(texture_0.getTextureUnit(), "texture0");
+		//core_program.set1i(texture_1.getTextureUnit(), "texture1");
+		
 
 		//model matrix
 		ModelMatrix = glm::mat4 (1.f);
@@ -295,12 +252,13 @@ int main() {
 		ViewMatrix = glm::lookAt(camPosition, camPosition + camFront, worldUp);
 		core_program.setMat4fv(ViewMatrix, "ViewMatrix");
 		//Use a program
+		
+		texture_0.bind();
+		texture_1.bind();
+		material0.sendToShader(core_program);
 		core_program.use();
 		//activate texture
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture0);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture1);
+		
 
 		//bind vertex array object
 		glBindVertexArray(VAO);
@@ -315,8 +273,8 @@ int main() {
 
 		glBindVertexArray(0);
 		glUseProgram(0);
-		glActiveTexture(0);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		texture_0.unbind();
+		texture_1.unbind();
 	}
 	//END OF PROGRAM
 	glfwDestroyWindow(window);

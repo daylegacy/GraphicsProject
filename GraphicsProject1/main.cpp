@@ -32,36 +32,30 @@ void updateInput(GLFWwindow  *window) {
 
 
 
-void updateInput(GLFWwindow * window, glm::vec3& position, glm::vec3& rotation, glm::vec3& scale, glm::vec3& camPosition) {
+void updateInput(GLFWwindow * window, Mesh & mesh) {
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		position.z -= 0.01f;
+		mesh.move(glm::vec3(0.f, 0.f, -0.01f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		position.x -= 0.01f;
+		mesh.move(glm::vec3(-0.01f, 0.f, 0.f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		position.z += 0.01f;
+		mesh.move(glm::vec3(0.f, 0.f, 0.01f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		position.x += 0.01f;
+		mesh.move(glm::vec3(0.01f, 0.f, 0.f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-		rotation.y -= 0.01f;
+		mesh.rotate(glm::vec3(0.f, -0.01f, 0.f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-		rotation.y += 0.01f;
+		mesh.rotate(glm::vec3(0.f, 0.01f, 0.f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
-		scale -= 0.1f;
+		mesh.scale(glm::vec3(-0.1f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
-		scale += 0.1f;
-	}
-	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-		camPosition.x -= 0.1f;
-	}
-	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
-		camPosition.x += 0.1f;
+		mesh.scale(glm::vec3(0.1f));
 	}
 }
 
@@ -110,7 +104,7 @@ int main() {
 
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
 
 
 
@@ -118,43 +112,11 @@ int main() {
 	shader core_program("vertex_core.glsl", "fragment_core.glsl");
 	//model
 
-	//VAO, VBO, EBO
-	//gen VAO and bind
-	GLuint VAO;
-	glCreateVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	 
-	//GEN VBO AND BIND AND SEND DATA
-	GLuint VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	//GEN EBO AND BIND AND SEND DATA
-	GLuint EBO;
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	//SET VERTEXATTRIBPOINTERS AND ENABLE (INPUT ASSEMBLY)
-	//GLuint attribLoc = glGetAttribLocation(core_program, "vertex_position");
-	//Position
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
-	glEnableVertexAttribArray(0);
-	//Color
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
-	glEnableVertexAttribArray(1);
-	//Texcoord
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texcoord));
-	glEnableVertexAttribArray(2);
-
-	//normal
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
-	glEnableVertexAttribArray(3);
-
-	//bind VAO 0
-	glBindVertexArray(0);
-	
+	Mesh test(vertices, nrOfVertices, indices, nrOfIndices,
+		glm::vec3(0.f),
+		glm::vec3(0.f, 0.f, 0.f),
+		glm::vec3(1.f)
+	);
 	
 	//texture0 init
 	Texture texture_0("Images/crate.png", GL_TEXTURE_2D ,0);
@@ -165,16 +127,6 @@ int main() {
 	//material
 	Material material0(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(4.f), texture_0.getTextureUnit(), texture_1.getTextureUnit());
 	
-	glm::vec3 position(0.f);
-	glm::vec3 rotation(0.f);
-	glm::vec3 scale(1.f);
-
-	glm::mat4 ModelMatrix(1.f);
-	ModelMatrix = glm::translate(ModelMatrix, position);
-	ModelMatrix = glm::rotate(ModelMatrix, rotation.x, glm::vec3(1.f, 0.f, 0.f));
-	ModelMatrix = glm::rotate(ModelMatrix, rotation.y, glm::vec3(0.f, 1.f, 0.f));
-	ModelMatrix = glm::rotate(ModelMatrix, rotation.z, glm::vec3(0.f, 0.f, 1.f));
-	ModelMatrix = glm::scale(ModelMatrix, scale);
 
 	glm::vec3 camPosition(0.f, 0.f, 1.f);
 	glm::vec3 worldUp(0.f, 1.f, 0.f);
@@ -199,9 +151,8 @@ int main() {
 
 	//INIT uniforms
 	core_program.use();
-	core_program.setMat4fv(ModelMatrix, "ModelMatrix");
-	core_program.setMat4fv(ModelMatrix, "ViewMatrix");
-	core_program.setMat4fv(ModelMatrix, "ProjectionMatrix");
+	core_program.setMat4fv(ViewMatrix, "ViewMatrix");
+	core_program.setMat4fv(ProjectionMatrix, "ProjectionMatrix");
 	
 	core_program.setVec3f(lightPos0, "lightPos0");
 	core_program.setVec3f(camPosition, "cameraPos");
@@ -211,7 +162,7 @@ int main() {
 	while (!glfwWindowShouldClose(window)) {
 		//UPDATE INPUT
 		glfwPollEvents();
-		updateInput(window, position, rotation, scale, camPosition);
+		updateInput(window, test);
 
 		//update
 		updateInput(window);
@@ -220,20 +171,6 @@ int main() {
 		glClearColor(0.f, 0.2f, 0.3f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-
-		//update uniforms
-		//core_program.set1i(texture_0.getTextureUnit(), "texture0");
-		//core_program.set1i(texture_1.getTextureUnit(), "texture1");
-		
-
-		//model matrix
-		ModelMatrix = glm::mat4 (1.f);
-		ModelMatrix = glm::translate(ModelMatrix, position);
-		ModelMatrix = glm::rotate(ModelMatrix, rotation.x, glm::vec3(1.f, 0.f, 0.f));
-		ModelMatrix = glm::rotate(ModelMatrix, rotation.y, glm::vec3(0.f, 1.f, 0.f));
-		ModelMatrix = glm::rotate(ModelMatrix, rotation.z, glm::vec3(0.f, 0.f, 1.f));
-		ModelMatrix = glm::scale(ModelMatrix, scale);
-		core_program.setMat4fv(ModelMatrix, "ModelMatrix");
 
 		//restrict shortening depends on window proportions but cant minimize
 		glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
@@ -247,7 +184,6 @@ int main() {
 		);
 		core_program.setMat4fv(ProjectionMatrix, "ProjectionMatrix");
 
-
 		//view matrix
 		ViewMatrix = glm::lookAt(camPosition, camPosition + camFront, worldUp);
 		core_program.setMat4fv(ViewMatrix, "ViewMatrix");
@@ -256,22 +192,15 @@ int main() {
 		texture_0.bind();
 		texture_1.bind();
 		material0.sendToShader(core_program);
-		core_program.use();
-		//activate texture
-		
-
-		//bind vertex array object
-		glBindVertexArray(VAO);
 
 		//Draw
 		//glDrawArrays(GL_TRIANGLES, 0, nrOfVertices);
-		glDrawElements(GL_TRIANGLES, nrOfIndices, GL_UNSIGNED_INT, 0);
+		test.render(&core_program);
 
 		//End of draw
 		glfwSwapBuffers(window);
 		glFlush();
 
-		glBindVertexArray(0);
 		glUseProgram(0);
 		texture_0.unbind();
 		texture_1.unbind();

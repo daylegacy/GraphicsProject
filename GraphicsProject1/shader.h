@@ -19,16 +19,18 @@
 class shader
 {
 private:
+
 	//member variables
 	GLuint id;
-
+	const int versionMajor;
+	const int versionMinor;
 	//private functions
 	std::string loadShaderSource(const char * filename);
 	GLuint loadShader(GLenum type, const char * filename);
 	void linkProgram(GLuint vertexShader, GLuint geometryShader, GLuint fragmentShader);
 public:
 	//constructors/destructors
-	shader(const char * vertexFile, const char * fragmentFile, const char* geometryFile="");
+	shader(const int versionMajor, const int versionMinor, const char * vertexFile, const char * fragmentFile, const char* geometryFile="");
 	void use();
 	void unuse();
 	~shader();

@@ -22,6 +22,7 @@
 #include "texture.h"
 #include "Material.h"
 #include "Vertex.h"
+#include "Primitives.h"
 #include "Mesh.h"
 
 

@@ -17,6 +17,12 @@ std::string shader::loadShaderSource(const char * filename) {
 		std::cout << "ERROR::SHADER::COULD_NOT_OPEN_FILE: " << filename << "\n";
 	}
 	in_file.close();
+
+	std::string version =
+		std::to_string(this->versionMajor) +
+		std::to_string(this->versionMinor) +
+		"0";
+	src.replace(src.find("#version"), 12, "#version " + version);
 	return src;
 }
 
@@ -63,7 +69,10 @@ void shader::linkProgram(GLuint vertexShader, GLuint geometryShader, GLuint frag
 	}
 }
 
-shader::shader(const char * vertexFile, const char * fragmentFile, const char* geometryFile) {
+shader::shader(const int versionMajor, const int versionMinor, const char * vertexFile, const char * fragmentFile, const char* geometryFile)
+	:versionMajor(versionMajor), versionMinor(versionMinor)
+{
+	
 	GLuint vertexShader = 0;
 	GLuint geometryShader = 0;
 	GLuint fragmentShader = 0;

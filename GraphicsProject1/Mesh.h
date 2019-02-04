@@ -102,7 +102,7 @@ private:
 		glBindVertexArray(0);
 	}
 
-	void updateUniforms(shader * shader) {
+	void updateUniforms(Shader * shader) {
 		shader->setMat4fv(this->ModelMatrix, "ModelMatrix");
 	}
 
@@ -184,7 +184,7 @@ public:
 		ModelMatrix = glm::rotate(ModelMatrix, this->rotation.z, glm::vec3(0.f, 0.f, 1.f));
 		ModelMatrix = glm::scale(ModelMatrix, this->scaling);
 	}
-	void render(shader * shader) {
+	void render(Shader * shader) {
 		//update uniforms
 		this->updateModelMatrix();
 		this->updateUniforms(shader);

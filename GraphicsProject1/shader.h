@@ -16,7 +16,7 @@
 #include<gtc\type_ptr.hpp>
 
 #include<SOIL2.h>
-class shader
+class Shader
 {
 private:
 
@@ -30,10 +30,10 @@ private:
 	void linkProgram(GLuint vertexShader, GLuint geometryShader, GLuint fragmentShader);
 public:
 	//constructors/destructors
-	shader(const int versionMajor, const int versionMinor, const char * vertexFile, const char * fragmentFile, const char* geometryFile="");
+	Shader(const int versionMajor, const int versionMinor, const char * vertexFile, const char * fragmentFile, const char* geometryFile="");
 	void use();
 	void unuse();
-	~shader();
+	~Shader();
 	void set1i(GLint value, const GLchar* name);
 	
 	void set1f(GLfloat value, const GLchar* name);

@@ -1,6 +1,6 @@
 #include "shader.h"
 
-std::string shader::loadShaderSource(const char * filename) {
+std::string Shader::loadShaderSource(const char * filename) {
 	std::string temp = "";
 	std::string src = "";
 
@@ -26,7 +26,7 @@ std::string shader::loadShaderSource(const char * filename) {
 	return src;
 }
 
-GLuint shader::loadShader(GLenum type, const char * filename) {
+GLuint Shader::loadShader(GLenum type, const char * filename) {
 	char infoLog[512];
 	GLint success;
 
@@ -45,7 +45,7 @@ GLuint shader::loadShader(GLenum type, const char * filename) {
 	return shader;
 }
 
-void shader::linkProgram(GLuint vertexShader, GLuint geometryShader, GLuint fragmentShader) {
+void Shader::linkProgram(GLuint vertexShader, GLuint geometryShader, GLuint fragmentShader) {
 	char infoLog[512];
 	GLint success;
 
@@ -69,7 +69,7 @@ void shader::linkProgram(GLuint vertexShader, GLuint geometryShader, GLuint frag
 	}
 }
 
-shader::shader(const int versionMajor, const int versionMinor, const char * vertexFile, const char * fragmentFile, const char* geometryFile)
+Shader::Shader(const int versionMajor, const int versionMinor, const char * vertexFile, const char * fragmentFile, const char* geometryFile)
 	:versionMajor(versionMajor), versionMinor(versionMinor)
 {
 	
@@ -91,21 +91,21 @@ shader::shader(const int versionMajor, const int versionMinor, const char * vert
 }
 
 
-shader::~shader()
+Shader::~Shader()
 {
 	glDeleteProgram(this->id);
 }
 
 
-void shader::use() {
+void Shader::use() {
 	glUseProgram(this->id);
 }
 
-void shader::unuse() {
+void Shader::unuse() {
 	glUseProgram(0);
 }
 
-void shader::set1i(GLint value, const GLchar* name) {
+void Shader::set1i(GLint value, const GLchar* name) {
 	this->use();
 
 	glUniform1i(glGetUniformLocation(this->id, name), value);
@@ -113,21 +113,21 @@ void shader::set1i(GLint value, const GLchar* name) {
 	this->unuse();
 }
 
-void shader::set1f(GLfloat value, const GLchar* name) {
+void Shader::set1f(GLfloat value, const GLchar* name) {
 	this->use();
 
 	glUniform1f(glGetUniformLocation(this->id, name), value);
 
 	this->unuse();
 }
-void shader::setVec2f(glm::fvec2 value, const GLchar* name) {
+void Shader::setVec2f(glm::fvec2 value, const GLchar* name) {
 	this->use();
 
 	glUniform2fv(glGetUniformLocation(this->id, name), 1, glm::value_ptr(value));
 
 	this->unuse();
 }
-void shader::setVec3f(glm::fvec3 value, const GLchar* name) {
+void Shader::setVec3f(glm::fvec3 value, const GLchar* name) {
 	this->use();
 
 	glUniform3fv(glGetUniformLocation(this->id, name), 1, glm::value_ptr(value));
@@ -135,7 +135,7 @@ void shader::setVec3f(glm::fvec3 value, const GLchar* name) {
 	this->unuse();
 }
 
-void shader::setVec4f(glm::fvec3 value, const GLchar* name) {
+void Shader::setVec4f(glm::fvec3 value, const GLchar* name) {
 	this->use();
 
 	glUniform4fv(glGetUniformLocation(this->id, name), 1, glm::value_ptr(value));
@@ -143,7 +143,7 @@ void shader::setVec4f(glm::fvec3 value, const GLchar* name) {
 	this->unuse();
 }
 
-void shader::setMat3fv(glm::mat4 value, const GLchar* name, GLboolean transpose) {
+void Shader::setMat3fv(glm::mat4 value, const GLchar* name, GLboolean transpose) {
 	this->use();
 
 	glUniformMatrix3fv(glGetUniformLocation(this->id, name), 1, transpose, value_ptr(value));
@@ -151,7 +151,7 @@ void shader::setMat3fv(glm::mat4 value, const GLchar* name, GLboolean transpose)
 	this->unuse();
 }
 
-void shader::setMat4fv(glm::mat4 value, const GLchar* name, GLboolean transpose) {
+void Shader::setMat4fv(glm::mat4 value, const GLchar* name, GLboolean transpose) {
 	this->use();
 
 	glUniformMatrix4fv(glGetUniformLocation(this->id, name), 1, transpose, value_ptr(value));

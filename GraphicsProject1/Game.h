@@ -7,7 +7,7 @@
 #include"libs.h"
 
 enum shader_enum { SHADER_CORE_PROGRAM = 0 };
-enum texture_enum { TEX_PUSHEEN0 = 0, TEX_CRATE1 };
+enum texture_enum { TEX_CRATE0 = 0, TEX_CRATE_SPECULAR1 };
 enum material_enum { MAT_1 = 0 };
 enum mesh_enum { MESH_QUAD =0};
  

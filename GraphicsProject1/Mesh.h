@@ -33,13 +33,14 @@ private:
 		//GEN VBO AND BIND AND SEND DATA
 		glGenBuffers(1, &this->VBO);
 		glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-		glBufferData(GL_ARRAY_BUFFER, this->nrOfVertices*sizeof(Vertex), primitive->getVertices(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, this->nrOfVertices * sizeof(Vertex), primitive->getVertices(), GL_STATIC_DRAW);
 
 		//GEN EBO AND BIND AND SEND DATA
-		glGenBuffers(1, &this->EBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->nrOfIndices * sizeof(GLuint), primitive->getIndices(), GL_STATIC_DRAW);
-
+		if (this->nrOfIndices > 0) {
+			glGenBuffers(1, &this->EBO);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->nrOfIndices * sizeof(GLuint), primitive->getIndices(), GL_STATIC_DRAW);
+		}
 		//SET VERTEXATTRIBPOINTERS AND ENABLE (INPUT ASSEMBLY)
 		//GLuint attribLoc = glGetAttribLocation(core_program, "vertex_position");
 		//Position
@@ -78,9 +79,13 @@ private:
 		glBufferData(GL_ARRAY_BUFFER, this->nrOfVertices * sizeof(Vertex), vertexArray, GL_STATIC_DRAW);
 
 		//GEN EBO AND BIND AND SEND DATA
-		glGenBuffers(1, &this->EBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->nrOfIndices * sizeof(GLuint), indexArray, GL_STATIC_DRAW);
+
+		if (this->nrOfIndices > 0)
+		{
+			glGenBuffers(1, &this->EBO);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->nrOfIndices * sizeof(GLuint), indexArray, GL_STATIC_DRAW);
+		}
 
 		//SET VERTEXATTRIBPOINTERS AND ENABLE (INPUT ASSEMBLY)
 		//GLuint attribLoc = glGetAttribLocation(core_program, "vertex_position");
@@ -146,7 +151,9 @@ public:
 	~Mesh(){
 		glDeleteVertexArrays(1, &this->VAO);
 		glDeleteBuffers(1, &this->VBO);
-		glDeleteBuffers(1, &this->EBO);
+		if (this->nrOfIndices > 0) {
+			glDeleteBuffers(1, &this->EBO);
+		}
 	}
 
 	//accessors
@@ -190,12 +197,12 @@ public:
 		this->updateUniforms(shader);
 		shader->use();
 		glBindVertexArray(this->VAO);
-		/*if (!nrOfIndices) {
+		if (!nrOfIndices) {
 			glDrawArrays(GL_TRIANGLES, 0, nrOfVertices);
 		}
-		else {*/
+		else {
 			glDrawElements(GL_TRIANGLES, nrOfIndices, GL_UNSIGNED_INT, 0);
-		//}
+		}
 		shader->unuse();
 
 	}

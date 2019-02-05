@@ -79,9 +79,9 @@ void Game::initShaders()
 void Game::initTextures()
 {
 	//texture 0
-	this->textures.push_back(new Texture("Images/pusheen.png", GL_TEXTURE_2D));
-	//texture1 init
 	this->textures.push_back(new Texture("Images/crate.png", GL_TEXTURE_2D));
+	//texture1 init
+	this->textures.push_back(new Texture("Images/crate_specular.png", GL_TEXTURE_2D));
 }
 
 void Game::initMaterials()
@@ -93,9 +93,9 @@ void Game::initMaterials()
 void Game::initMeshes()
 {
 	this->meshes.push_back(
-		new Mesh(&Quad(),
+		new Mesh(&Pyramid(),
 			glm::vec3(0.f),
-			glm::vec3(0.f, 0.f, 0.f),
+			glm::vec3(0.f),
 			glm::vec3(1.f)
 		)
 	);
@@ -103,7 +103,7 @@ void Game::initMeshes()
 
 void Game::initLights()
 {
-	this->lights.push_back(new glm::vec3(0.f, 0.f, 1.f));
+	this->lights.push_back(new glm::vec3(0.f, 4.f, 1.f));
 }
 
 void Game::initUniforms()
@@ -119,14 +119,14 @@ void Game::updateUniforms()
 {
 	this->shaders[SHADER_CORE_PROGRAM]->setVec3f(*this->lights[0], "lightPos0");
 	this->shaders[SHADER_CORE_PROGRAM]->setVec3f(this->camPosition, "cameraPos");
-	this->materials[MAT_1]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
+	
 	glfwGetFramebufferSize(this->window, &this->framebufferWidth, &this->framebufferHeight);
-	this->ProjectionMatrix = glm::perspective(
+	/*this->ProjectionMatrix = glm::perspective(
 		glm::radians(fov),
 		static_cast<float>(framebufferWidth) / framebufferHeight,
 		nearPlane,
 		farPlane
-	);
+	);*/
 	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(ProjectionMatrix, "ProjectionMatrix");
 
 	//view matrix
@@ -213,11 +213,12 @@ void Game::render()
 
 	//update uniforms
 	this->updateUniforms();
+	this->materials[MAT_1]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
 	//Use a program
 	this->shaders[SHADER_CORE_PROGRAM]->use();
 
-	this->textures[TEX_PUSHEEN0]->bind(0);
-	this->textures[TEX_CRATE1]->bind(1);
+	this->textures[TEX_CRATE0]->bind(0);
+	this->textures[TEX_CRATE_SPECULAR1]->bind(1);
 
 	//Draw
 	//glDrawArrays(GL_TRIANGLES, 0, nrOfVertices);

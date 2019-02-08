@@ -27,7 +27,9 @@ private:
 		this->nrOfIndices = primitive->getNrOfIndices();
 
 		//create VAO
+		VAO = 0;
 		glCreateVertexArrays(1, &this->VAO);
+		//glGenVertexArrays(1, &this->VAO);
 		glBindVertexArray(this->VAO);
 
 		//GEN VBO AND BIND AND SEND DATA

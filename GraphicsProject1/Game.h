@@ -79,10 +79,11 @@ public:
 	//Functions
 	void update();
 	void render();
+	void updateInput();
 
 	//static functions
 	static void updateInput(GLFWwindow * window, Mesh & mesh);
-	static void updateInput(GLFWwindow * window);
+	
 
 };
 

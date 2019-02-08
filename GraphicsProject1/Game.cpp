@@ -86,7 +86,7 @@ void Game::initTextures()
 
 void Game::initMaterials()
 {
-	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(4.f),
+	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f),
 		0, 1));
 }
 
@@ -154,7 +154,7 @@ Game::Game(const char * title,
 	this->camPosition=glm::vec3(0.f, 0.f, 1.f);
 	this->worldUp= glm::vec3(0.f, 1.f, 0.f);
 	this->camFront= glm::vec3(0.f, 0.f, -1.f);
-	this->fov = 120.f;
+	this->fov = 65.f;
 	this->nearPlane = 0.1f;
 	this->farPlane = 1000.f;
 
@@ -202,7 +202,7 @@ void Game::setWindowShouldClose()
 void Game::update()
 {
 	glfwPollEvents();
-	this->updateInput(this->window);
+	this->updateInput();
 	this->updateInput(this->window, *meshes[MESH_QUAD]);
 }
 
@@ -234,14 +234,53 @@ void Game::render()
 	glBindVertexArray(0);
 }
 
-void Game::updateInput(GLFWwindow  *window) {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-		glfwSetWindowShouldClose(window, GLFW_TRUE);
+void Game::updateInput() {
+	if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+		glfwSetWindowShouldClose(this->window, GLFW_TRUE);
 	}
+	if (glfwGetKey(this->window, GLFW_KEY_W) == GLFW_PRESS) {
+		this->camPosition.z -= 0.05f;
+	}
+	if (glfwGetKey(this->window, GLFW_KEY_S) == GLFW_PRESS) {
+		this->camPosition.z += 0.05f;
+	}
+	if (glfwGetKey(this->window, GLFW_KEY_A) == GLFW_PRESS) {
+		this->camPosition.x -= 0.05f;
+	}
+	if (glfwGetKey(this->window, GLFW_KEY_D) == GLFW_PRESS) {
+		this->camPosition.x += 0.05f;
+	}
+	if (glfwGetKey(this->window, GLFW_KEY_C) == GLFW_PRESS) {
+		this->camPosition.y += 0.05f;
+	}
+	if (glfwGetKey(this->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+		this->camPosition.y -= 0.05f;
+	}
+	if (glfwGetKey(this->window, GLFW_KEY_Q) == GLFW_PRESS) {
+		glm::mat3 rotation(0.f);
+		rotation[0][0] =rotation[2][2]= glm::cos(0.1);
+		rotation[0][2] = -glm::sin(0.1);
+		rotation[2][0] = glm::sin(0.1);
+		rotation[1][1] = 1;
+
+		this->camFront = rotation * this->camFront;
+	}
+	if (glfwGetKey(this->window, GLFW_KEY_E) == GLFW_PRESS) {
+		glm::mat3 rotation(0.f);
+		rotation[0][0] = rotation[2][2] = glm::cos(-0.1);
+		rotation[0][2] = -glm::sin(-0.1);
+		rotation[2][0] = glm::sin(-0.1);
+		rotation[1][1] = 1;
+
+		this->camFront = rotation * this->camFront;
+	}
+
 }
 
+
+
 void Game::updateInput(GLFWwindow * window, Mesh & mesh) {
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+	/*if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		mesh.move(glm::vec3(0.f, 0.f, -0.01f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
@@ -264,5 +303,5 @@ void Game::updateInput(GLFWwindow * window, Mesh & mesh) {
 	}
 	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
 		mesh.scale(glm::vec3(0.1f));
-	}
+	}*/
 }

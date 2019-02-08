@@ -8,7 +8,7 @@ int main() {
 	const int WINDOW_WIDTH = 640;
 	const int WINDOW_HEIGHT = 480;
 	const int GLmajorVersion = 4;
-	const int GLminorVersion = 5;
+	const int GLminorVersion = 6;
 
 	Game game("window", WINDOW_WIDTH, WINDOW_HEIGHT, 
 		GLmajorVersion, GLminorVersion, true);

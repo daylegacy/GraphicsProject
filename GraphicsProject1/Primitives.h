@@ -87,9 +87,9 @@ public:
 		Vertex vertices[] = {
 			//Position							//color						//texcoords				//normals
 			//front triangle
-			glm::vec3(0.0f, 0.5f, 0.0f),	glm::vec3(1.f, 1.f, 0.f),	glm::vec2(0.5f, 1.f),	glm::vec3(0.f, 0.f, 1.f),
-			glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec3(0.f, 1.f, 0.f),	glm::vec2(0.0f, 0.f),	glm::vec3(0.f, 0.f, 1.f),
-			glm::vec3(0.5f,-0.5f, 0.5f),	glm::vec3(1.f, 1.f, 1.f),	glm::vec2(1.f, 0.f),	glm::vec3(0.f, 0.f, 1.f),
+			glm::vec3(0.0f, 0.5f, 0.0f),	glm::vec3(1.f, 1.f, 0.f),	glm::vec2(0.5f, 1.f),	glm::vec3(0.f, 1.f, 2.f),
+			glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec3(0.f, 1.f, 0.f),	glm::vec2(0.0f, 0.f),	glm::vec3(0.f, 1.f, 2.f),
+			glm::vec3(0.5f,-0.5f, 0.5f),	glm::vec3(1.f, 1.f, 1.f),	glm::vec2(1.f, 0.f),	glm::vec3(0.f, 1.f, 2.f),
 
 			//leftside triangle
 			glm::vec3(0.0f, 0.5f, 0.0f),	glm::vec3(1.f, 0.f, 0.f),	glm::vec2(0.5f, 1.f),	glm::vec3(-2.f, 1.f, 0.f),
@@ -97,14 +97,14 @@ public:
 			glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec3(0.f, 0.f, 1.f),	glm::vec2(1.0f, 0.f),	glm::vec3(-2.f, 1.f, 0.f),
 
 			//back triangle
-			glm::vec3(0.0f, 0.5f, 0.0f),	glm::vec3(1.f, 0.f, 0.f),	glm::vec2(0.5f, 1.f),	glm::vec3(0.f, 0.f, -1.f),
-			glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec3(0.f, 1.f, 0.f),	glm::vec2(0.0f, 0.f),	glm::vec3(0.f, 0.f, -1.f),
-			glm::vec3(-0.5f, -0.5f, -0.5f),	glm::vec3(0.f, 0.f, 1.f),	glm::vec2(1.0f, 0.f),	glm::vec3(0.f, 0.f, -1.f),
+			glm::vec3(0.0f, 0.5f, 0.0f),	glm::vec3(1.f, 0.f, 0.f),	glm::vec2(0.5f, 1.f),	glm::vec3(0.f, 1.f, -2.f),
+			glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec3(0.f, 1.f, 0.f),	glm::vec2(0.0f, 0.f),	glm::vec3(0.f, 1.f, -2.f),
+			glm::vec3(-0.5f, -0.5f, -0.5f),	glm::vec3(0.f, 0.f, 1.f),	glm::vec2(1.0f, 0.f),	glm::vec3(0.f, 1.f, -2.f),
 
 			//rightside triangle
-			glm::vec3(0.0f, 0.5f, 0.0f),	glm::vec3(1.f, 0.f, 0.f),	glm::vec2(0.5f, 1.f),	glm::vec3(1.f, 0.f, 0.f),
-			glm::vec3(0.5f, -0.5f, 0.5f),	glm::vec3(0.f, 1.f, 0.f),	glm::vec2(0.0f, 0.f),	glm::vec3(1.f, 0.f, 0.f),
-			glm::vec3(0.5f,-0.5f, -0.5f),	glm::vec3(0.f, 0.f, 1.f),	glm::vec2(1.f, 0.f),	glm::vec3(1.f, 0.f, 0.f),
+			glm::vec3(0.0f, 0.5f, 0.0f),	glm::vec3(1.f, 0.f, 0.f),	glm::vec2(0.5f, 1.f),	glm::vec3(2.f, 1.f, 0.f),
+			glm::vec3(0.5f, -0.5f, 0.5f),	glm::vec3(0.f, 1.f, 0.f),	glm::vec2(0.0f, 0.f),	glm::vec3(2.f, 1.f, 0.f),
+			glm::vec3(0.5f,-0.5f, -0.5f),	glm::vec3(0.f, 0.f, 1.f),	glm::vec2(1.f, 0.f),	glm::vec3(2.f, 1.f, 0.f),
 		};
 		unsigned nrOfVertices = sizeof(vertices) / sizeof Vertex;
 		this->set(vertices, nrOfVertices, nullptr, 0);

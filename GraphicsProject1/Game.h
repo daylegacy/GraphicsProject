@@ -80,6 +80,8 @@ public:
 	void update();
 	void render();
 	void updateInput();
+	void updateKeyboardInput();
+	void updateMouseInput();
 
 	//static functions
 	static void updateInput(GLFWwindow * window, Mesh & mesh);

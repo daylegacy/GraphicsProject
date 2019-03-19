@@ -56,6 +56,8 @@ void Game::initOpenGLOptions()
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Game::initMatrices()
@@ -201,9 +203,8 @@ void Game::setWindowShouldClose()
 
 void Game::update()
 {
-	glfwPollEvents();
 	this->updateInput();
-	this->updateInput(this->window, *meshes[MESH_QUAD]);
+	//this->updateInput(this->window, *meshes[MESH_QUAD]);
 }
 
 void Game::render()
@@ -235,6 +236,13 @@ void Game::render()
 }
 
 void Game::updateInput() {
+	glfwPollEvents();
+	this->updateKeyboardInput();
+	this->updateMouseInput();
+}
+
+void Game::updateKeyboardInput()
+{
 	if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(this->window, GLFW_TRUE);
 	}
@@ -258,7 +266,7 @@ void Game::updateInput() {
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_Q) == GLFW_PRESS) {
 		glm::mat3 rotation(0.f);
-		rotation[0][0] =rotation[2][2]= glm::cos(0.1);
+		rotation[0][0] = rotation[2][2] = glm::cos(0.1);
 		rotation[0][2] = -glm::sin(0.1);
 		rotation[2][0] = glm::sin(0.1);
 		rotation[1][1] = 1;
@@ -274,7 +282,10 @@ void Game::updateInput() {
 
 		this->camFront = rotation * this->camFront;
 	}
+}
 
+void Game::updateMouseInput()
+{
 }
 
 
